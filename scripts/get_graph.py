@@ -1,23 +1,26 @@
 import inspect, os
 import json
 from math import sin, cos, sqrt, atan2, radians
+import networkx as nx
 
 # Put all datasets in 'path-to-repo/data' directory please
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
-#path += '/../data/'
+path += '/../data/'
 
 
 os.chdir(path)
 
-with open('../yelp_academic_dataset_business.json', 'rb') as f:
-    data = f.readlines()
+def load_data():
 
-data = map(lambda x: x.rstrip(), data)
+    with open('edinburgh.json', 'rb') as infile:
+        # data = infile.readlines()
+        data = json.load(infile)
 
-business_list = [x for x in [json.loads(line) for line in data] if x['city'] == 'Edinburgh']
+    # data = map(lambda x: x.rstrip(), data)
 
-# Num of Edinburgh businesses = roughly 3500
-# print len(business_list)
+    # business_list = [x for x in [json.loads(line) for line in data]]
+
+    return data
 
 
 def calc_distance(business1, business2):
@@ -42,13 +45,16 @@ def calc_distance(business1, business2):
     return distance
 
 
-def get_graph():
+def get_graph(business_list):
 
     # threshold --> the radius of our unit circle
     threshold = 0.3
 
-    # Our graph
-    G = dict()
+    print len(business_list)
+    business_ids = [ x['business_id'] for x in business_list ]
+
+    G = nx.Graph()
+    G.add_nodes_from(business_ids)
 
     for (business1, business2) in [ (x, y) for x in business_list for y in business_list if x != y ]:
 
@@ -58,10 +64,8 @@ def get_graph():
         if distance <= 2 * threshold:
             b1_id = business1['business_id']
             b2_id = business2['business_id']
-            if b1_id in G:
-                G[b1_id].append(b2_id)
-            else:
-                G[b1_id] = [b2_id]
+
+            G.add_edge(b1_id, b2_id)
 
     return G
 
@@ -69,18 +73,22 @@ def get_graph():
 
 if __name__ == '__main__':
 
-    G = get_graph()
+    business_list = load_data()
+    G = get_graph(business_list)
 
-    total_connections = 0
-    for key, val in G.iteritems():
-        total_connections += len(val)
+    print 'Total connections:'
+    print G.number_of_edges()
 
-    # Undirect the edges
-    total_connections /= 2
+    # total_connections = 0
+    # for key, val in G.iteritems():
+    #     total_connections += len(val)
 
-    print 'Number of keys --> '
-    print len(G.keys())
+    # # Undirect the edges
+    # total_connections /= 2
 
-    print 'Total connections -->'
-    print total_connections
+    # print 'Number of keys --> '
+    # print len(G.keys())
+
+    # print 'Total connections -->'
+    # print total_connections
 
