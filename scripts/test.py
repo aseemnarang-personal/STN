@@ -4,12 +4,12 @@ from math import sin, cos, sqrt, atan2, radians
 
 # Put all datasets in 'path-to-repo/data' directory please
 path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
-path += '/../data/'
+#path += '/../data/'
 
 
 os.chdir(path)
 
-with open('yelp_academic_dataset_business.json', 'rb') as f:
+with open('../yelp_academic_dataset_business.json', 'rb') as f:
     data = f.readlines()
 
 data = map(lambda x: x.rstrip(), data)
