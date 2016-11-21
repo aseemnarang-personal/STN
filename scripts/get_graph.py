@@ -67,7 +67,7 @@ def get_graph(business_list):
 
             G.add_edge(b1_id, b2_id)
 
-    return G
+    return G.to_undirected()
 
 
 
