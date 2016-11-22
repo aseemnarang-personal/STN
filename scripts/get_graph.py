@@ -62,8 +62,8 @@ def get_graph(business_list):
 
         # Add them to the graph if they're closer than 2 * threshold (in km)
         if distance <= 2 * threshold:
-            b1_id = business1['business_id']
-            b2_id = business2['business_id']
+            b1_id = (business1['business_id'], business1['latitude'] , business1['longitude'])
+            b2_id = (business2['business_id'], business2['latitude'] , business2['longitude'])
 
             G.add_edge(b1_id, b2_id)
 
